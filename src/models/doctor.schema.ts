@@ -22,7 +22,7 @@ export const DoctorSchema = new mongoose.Schema({
   _id: { type: mongoose.Schema.Types.ObjectId,auto:true },
     username:{ type: String, required: true },
     phone:{ type: String, required: true,unique:true },
-    password: { type: String, default: "" },
+    password: { type: String, required:true,select:false},
     gender:
     {type: String,
     enum: [

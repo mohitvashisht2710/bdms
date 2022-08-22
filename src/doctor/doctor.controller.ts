@@ -21,7 +21,7 @@ import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
   @Get(':id')
   @UseGuards(JwtAuthGuard)
   createOrder(@Param('id') id: string) {
-    return this.doctorService.findDoctorByPayload(id);
+    return this.doctorService.findDoctorByPayload({doctorId:id});
   }
 
   @Post('get-slots')

@@ -11,52 +11,35 @@ import { DateSchedule, Doctor,Patient, Slot } from '../types/user';
     constructor(@InjectModel('Doctor') private doctorModel: Model<Doctor>,@InjectModel('DateSchedule') private dateScheduleModel: Model<DateSchedule>,@InjectModel('Slot') private slotModel: Model<Slot>) {}
 
 async findDoctorsList() {
-    return await this.doctorModel.find();
+    return await this.doctorModel.find({})
   }
 
   async findDoctorByPayload(payload: any) {
-    const { id } = payload;
-    return await this.doctorModel.findOne({ _id:id });
+    const { doctorId } = payload;
+    return await this.doctorModel.findOne({ _id:doctorId });
   }
 
-  // async getSlots(payload:any){
-  //   const {date,doctorId}=payload;
-  //   const doctor = await this.doctorModel.findOne({ _id: doctorId});
+  async getSlots(payload:any){
+    const {date,doctorId}=payload;
+    const doctor = await this.doctorModel.findOne({ _id: doctorId}).populate("_id username dates");
 
-	// 	// Doctor not found
-	// 	if (doctor === null) {
-	// 		console.log("Doctor not found in the database!");
-  //     throw new HttpException('Doctor not found', HttpStatus.NOT_FOUND);
-	// 	}
+		// Doctor not found
+		if (doctor === null) {
+			console.log("Doctor not found in the database!");
+      throw new HttpException('Doctor not found', HttpStatus.NOT_FOUND);
+		}
 
-	// 	// Doctor found
-	// 	// Find the date
-	// 	let count = 0;
-	// 	for (const i of doctor.dates) {
-	// 		if (i.date === date) {
-	// 			return i;
-	// 		}
-	// 		count++;
-	// 	}
-
-	// 	const oldLength = count;
-
-	// 	// Add new slots if date not found in the db
-	// 	const dateSchedule = await this.createDate(date);
-	// 	const updatedDoctor = await this.doctorModel.findOneAndUpdate(
-	// 		{ _id: doctor._id },
-	// 		{ $push: { dates: dateSchedule } },
-	// 		{ new: true }
-	// 	);
-
-	// 	if (updatedDoctor) {
-	// 		return updatedDoctor.dates[oldLength];
-	// 	} else {
+		// Doctor found
+		// Find the date
+		for (const i of doctor.dates) {
+			if (i.date === date) {
+				return i;
+			}
 			
-	// 		throw new HttpException('No Slots found', HttpStatus.BAD_REQUEST);
-  //   }
+		}
+    throw new HttpException('No Slots found', HttpStatus.BAD_REQUEST);
 		
-  // }
+  }
 
   async createDate(date:any,id:any) {
     let dateSchedule={date: date,
@@ -99,6 +82,7 @@ async findDoctorsList() {
       }),
     ]
   }
+
   let dateCreated=new this.dateScheduleModel(dateSchedule);
   await dateCreated.save();
   const updatedDoctor = await this.doctorModel.findOneAndUpdate(

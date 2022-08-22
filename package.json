@@ -1,8 +1,8 @@
 {
-  "name": "nest-commerce",
+  "name": "bdms",
   "version": "0.0.0",
-  "description": "ecommerce app with nestjs",
-  "author": "Kelvin Mai",
+  "description": "bdms project",
+  "author": "Nagarro",
   "license": "MIT",
   "main": "dist/main.js",
   "engines": {
